@@ -33,6 +33,7 @@ import Zaehldauer from "@/types/enum/Zaehldauer";
 import Zeitauswahl from "@/types/enum/Zeitauswahl";
 import Zeitblock from "@/types/enum/Zeitblock";
 import Suggest from "@/types/suche/Suggest";
+import type TenantConfigurationDTO from "@/types/configuration/TenantConfigurationDTO";
 
 export default class DefaultObjectCreator {
   public static createDefaultZaehlstelleKarte(): ZaehlstelleKarteDTO {
@@ -329,8 +330,8 @@ export default class DefaultObjectCreator {
 
   public static createDefaultConfigurationDTO(): ConfigurationDTO {
     return {
-      map: this.createDefaultMapConfigurationDTO(),
       zaehlstelle: this.createDefaultZaehlstelleConfigurationDTO(),
+      tenant: this.createDefaultTenantConfigurationDTO()
     };
   }
 
@@ -351,6 +352,14 @@ export default class DefaultObjectCreator {
 
   public static createDefaultLadeZaehldatenTableDTO(): LadeZaehldatenTableDTO {
     return { zaehldaten: [] } as LadeZaehldatenTableDTO;
+  }
+
+  public static createDefaultTenantConfigurationDTO(): TenantConfigurationDTO {
+    return {
+      datenportalHeader: "Datenportal",
+      mapConfiguration: this.createDefaultMapConfigurationDTO()
+
+    };
   }
 
   public static createDefaultLadeProcessedMessdatenDTO(): LadeProcessedMesswerteDTO {
