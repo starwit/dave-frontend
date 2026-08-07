@@ -43,7 +43,7 @@
 
               <geometrie-panel v-model="chosenOptions" />
 
-              <zaehlungsvergleich-panel v-if="!activeZaehlung.value.dauerzaehlung" v-model="chosenOptions" />
+              <zaehlungsvergleich-panel v-if="!activeZaehlung.dauerzaehlung" v-model="chosenOptions" />
 
               <darstellungsoptionen-panel v-model="chosenOptions" />
             </v-expansion-panels>

@@ -261,27 +261,6 @@ const zeitraumStartAndEndDate = computed<StartAndEndDate>(() => {
 const minDateDescription = ref<string>("");
 const minDate = ref<Date>();
 
-watch(
-  () => [activeZaehlung.value.datum],
-  () => {
-    const startdatum = new Date("2006-01-01");
-    const realisierungsdatum = new Date(
-      activeZaehlung.value.datum
-    );
-    if (
-      dateUtils.isValidIsoDate(activeZaehlung.value.datum) &&
-      realisierungsdatum >= startdatum
-    ) {
-      minDateDescription.value = "Realisierungsdatum";
-      minDate.value = realisierungsdatum;
-    } else {
-      minDateDescription.value = "frühestmöglichen Datum";
-      minDate.value = startdatum;
-    }
-  },
-  { immediate: true }
-);
-
 const maxDateDescription = ref<string>("gestrigen Datum");
 const maxDate = ref<Date>(new Date(new Date().setDate(new Date().getDate() - 1)));
 
