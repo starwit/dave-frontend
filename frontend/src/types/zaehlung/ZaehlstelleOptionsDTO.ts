@@ -2,7 +2,7 @@ import ZaehldatenIntervall from "@/types/enum/ZaehldatenIntervall";
 import Zaehldauer from "@/types/enum/Zaehldauer";
 import type StartAndEndDate from "../common/StartAndEndDate";
 
-export default interface OptionsDTO {
+export default interface ZaehlstelleOptionsDTO {
   zeitraumStartAndEndDate: StartAndEndDate;
   zeitraum: string[];
   tagesTyp: string;

@@ -1,5 +1,5 @@
-import type OptionsDTO from "@/types/zaehlung/OptionsDTO";
 import type LadeProcessedZaehldatenDTO from "@/types/zaehlung/zaehldaten/LadeProcessedZaehldatenDTO";
+import type ZaehlstelleOptionsDTO from "@/types/zaehlung/ZaehlstelleOptionsDTO";
 
 import FetchService from "@/api/service/FetchService";
 import type { DrilldownDTO } from "@/types/zaehlung/zaehldaten/DrillDownDTO";
@@ -10,7 +10,7 @@ export default class LadeZaehldatenService {
 
   public static ladeZaehldatenProcessed(
     zaehlungId: string,
-    options: OptionsDTO
+    options: ZaehlstelleOptionsDTO
   ): Promise<LadeProcessedZaehldatenDTO> {
     return FetchService.postData(
       options,
