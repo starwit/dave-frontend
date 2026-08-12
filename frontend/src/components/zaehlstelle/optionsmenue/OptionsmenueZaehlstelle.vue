@@ -227,13 +227,16 @@ function setDefaultOptionsForZaehlung() {
         break;
       case Fahrzeug.RAD:
         // Rad soll nur bei reinen Radzählungen aktiviert sein
-        optionsCopy.radverkehr = ["R", "QR"].includes(activeZaehlung.value.zaehlart);
+        optionsCopy.radverkehr = [Zaehlart.R, Zaehlart.QR, Zaehlart.FJS, Zaehlart.QU, Zaehlart.QJS].includes(activeZaehlung.value.zaehlart);
         if (activeZaehlung.value.dauerzaehlung) {
           optionsCopy.radverkehr = true;
           optionsCopy.fussverkehr = true;
         }
-        optionsCopy.radverkehr = ["R", "QR"].includes(
-          activeZaehlung.value.zaehlart
+        break;
+      case Fahrzeug.FUSS:
+        // Fuss soll nur bei Zählarten FjS, Qu, QjS aktiviert sein
+        optionsCopy.fussverkehr = [Zaehlart.FJS, Zaehlart.QU, Zaehlart.QJS].includes(
+            activeZaehlung.value.zaehlart
         );
         break;
     }
