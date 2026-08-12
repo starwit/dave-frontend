@@ -35,6 +35,7 @@
                 <v-radio
                   label="Tageswert"
                   :value="Zeitauswahl.TAGESWERT"
+                  :disabled="isTeilzaehlungFussverkehr || isOnlyFussgaengerSelected"
                   @mouseover="hoverTageswert = true"
                   @mouseleave="hoverTageswert = false"
                 />
@@ -207,7 +208,7 @@ import type LadeZaehlungDTO from "@/types/zaehlung/LadeZaehlungDTO";
 import type ZaehlstelleOptionsDTO from "@/types/zaehlung/ZaehlstelleOptionsDTO";
 
 import { isEmpty } from "lodash";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 
 import PanelHeader from "@/components/common/PanelHeader.vue";
 import DateRangePicker from "@/components/common/DateRangePicker.vue";
@@ -215,15 +216,16 @@ import { useZaehlstelleStore } from "@/store/ZaehlstelleStore";
 import { ZaehldatenIntervallToSelect } from "@/types/enum/ZaehldatenIntervall";
 import Zaehldauer from "@/types/enum/Zaehldauer";
 import Zeitauswahl from "@/types/enum/Zeitauswahl";
-import Zeitblock, { zeitblockInfo } from "@/types/enum/Zeitblock";
 import TagesTyp, { tagesTypInfo } from "@/types/enum/TagesTyp";
 import HolidayOptions, { holidayOptionsInfo } from "@/types/enum/HolidayOptions";
+import Zeitblock, {zeitblockInfo, zeitblockOrder} from "@/types/enum/Zeitblock";
 import ZeitblockStuendlich, {
   zeitblockStuendlichInfo,
 } from "@/types/enum/ZeitblockStuendlich";
 import { useZaehlstelleUtils } from "@/util/ZaehlstelleUtils";
 import { useDateUtils } from "@/util/DateUtils";
 import type StartAndEndDate from "@/types/common/StartAndEndDate";
+import Fahrzeug from "@/types/enum/Fahrzeug";
 
 const chosenOptionsCopy = defineModel<ZaehlstelleOptionsDTO>({
   required: true,
@@ -423,6 +425,43 @@ const holidayOptionsValues = computed<Array<KeyVal>>(() => {
 const zaehldatenIntervalle = computed<Array<KeyVal>>(() => {
   return ZaehldatenIntervallToSelect;
 });
+
+const isTeilzaehlungFussverkehr = computed(() => {
+  return (activeZaehlung.value.kategorien.length === 1 &&
+      activeZaehlung.value.kategorien[0] === Fahrzeug.FUSS &&
+      activeZaehlung.value.zaehldauer !== Zaehldauer.DAUER_24_STUNDEN);
+});
+
+const isOnlyFussgaengerSelected = computed(() => {
+  return chosenOptionsCopy.value.fussverkehr && !(
+      chosenOptionsCopy.value.kraftfahrzeugverkehr ||
+      chosenOptionsCopy.value.schwerverkehr ||
+      chosenOptionsCopy.value.gueterverkehr ||
+      chosenOptionsCopy.value.radverkehr ||
+      chosenOptionsCopy.value.schwerverkehrsanteilProzent ||
+      chosenOptionsCopy.value.gueterverkehrsanteilProzent);
+});
+
+watch(
+    () => chosenOptionsCopy.value,
+    () => {
+      adaptOptionsUpdate();
+    },
+    { deep: true }
+);
+
+/**
+ * Passt die Controls anhand ihrer Abhängigkeiten zu anderen Optionen an.
+ */
+function adaptOptionsUpdate(){
+  if (isOnlyFussgaengerSelected.value && (chosenOptionsCopy.value.zeitauswahl === Zeitauswahl.TAGESWERT || chosenOptionsCopy.value.zeitauswahl === Zeitauswahl.SPITZENSTUNDE_KFZ)){
+    chosenOptionsCopy.value.zeitauswahl = Zeitauswahl.BLOCK;
+    const zbMax = zeitblockOrder.find(zb =>
+        zeitblockValues.value.some(zbv => zbv.value === zb)
+    ) || '';
+    chosenOptionsCopy.value.zeitblock = zbMax;
+  }
+}
 
 /**
  * Wird der Tageswert gewählt, so gibt es kein Dropdown Menü, da die Ansicht dann immer

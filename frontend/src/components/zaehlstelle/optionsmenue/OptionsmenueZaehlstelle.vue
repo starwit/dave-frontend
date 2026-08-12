@@ -134,6 +134,12 @@ const activeZaehlung = computed<LadeZaehlungDTO>(() => {
   return zaehlstelleStore.getAktiveZaehlung;
 });
 
+const isTeilzaehlungFussverkehr = computed(() => {
+  return (activeZaehlung.value.kategorien.length === 1 &&
+      activeZaehlung.value.kategorien[0] === Fahrzeug.FUSS &&
+      activeZaehlung.value.zaehldauer !== Zaehldauer.DAUER_24_STUNDEN);
+});
+
 /**
  * Setzt die Default-Einstellungen für das Optionsmenü je nach Zählung
  */
@@ -158,9 +164,17 @@ function setDefaultOptionsForZaehlung() {
     (date) => !isEmpty(date)
   );
 
-  if (activeZaehlung.value.zaehldauer === Zaehldauer.DAUER_13_STUNDEN) {
+  if (activeZaehlung.value.zaehldauer === Zaehldauer.DAUER_13_STUNDEN || isTeilzaehlungFussverkehr.value) {
     optionsCopy.zeitauswahl = Zeitauswahl.BLOCK;
-    optionsCopy.zeitblock = Zeitblock.ZB_06_19;
+    if (activeZaehlung.value.zaehldauer === Zaehldauer.DAUER_13_STUNDEN) {
+      optionsCopy.zeitblock = Zeitblock.ZB_06_19;
+    } else if (activeZaehlung.value.zaehldauer === Zaehldauer.DAUER_16_STUNDEN) {
+      optionsCopy.zeitblock = Zeitblock.ZB_06_22;
+    } else if (activeZaehlung.value.zaehldauer === Zaehldauer.DAUER_2_X_4_STUNDEN) {
+      optionsCopy.zeitblock = Zeitblock.ZB_06_10;
+    } else {
+      optionsCopy.zeitblock = Zeitblock.ZB_00_24;
+    }
   }
 
   if (
